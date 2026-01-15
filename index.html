@@ -21,16 +21,30 @@
       overflow-y: auto;
     }
 
-    .me {
-      text-align: right;
-      margin: 5px;
-    }
+    .me, .wakaba {
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 16px;
+    margin: 8px;
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word;
+}
 
-    .wakaba {
-      text-align: left;
-      margin: 5px;
-      color: green;
-    }
+/* 自分の吹き出し */
+.me {
+    margin-left: auto;
+    background: #d0ebff;
+    text-align: left;
+}
+
+/* わかばの吹き出し */
+.wakaba {
+    margin-right: auto;
+    background: #d3f9d8;
+    color: #065f46;
+}
+
 
     #wakaba-img {
       width: 120px;
@@ -38,6 +52,27 @@
       border-radius: 50%;
       display: block;
     }
+
+.me::after {
+    content: "";
+    position: absolute;
+    right: -8px;
+    top: 10px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent #d0ebff;
+}
+
+.wakaba::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 10px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent #d3f9d8 transparent transparent;
+}
+
   </style>
 </head>
 
