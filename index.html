@@ -1,75 +1,117 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>わかばチャット</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #f5f5f5;
-        }
-        #chat {
-            width: 400px;
-            height: 400px;
-            background: white;
-            border: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: auto;
-        }
-        .me {
-            text-align: right;
-            margin: 5px;
-        }
-        .wakaba {
-            text-align: left;
-            margin: 5px;
-            color: green;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>わかばチャット</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      text-align: center;
+    }
+
+    #chat {
+      width: 400px;
+      height: 400px;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: auto;
+      overflow-y: auto;
+    }
+
+    .me {
+      text-align: right;
+      margin: 5px;
+    }
+
+    .wakaba {
+      text-align: left;
+      margin: 5px;
+      color: green;
+    }
+
+    #wakaba-img {
+      width: 120px;
+      margin: 10px auto;
+      border-radius: 50%;
+      display: block;
+    }
+  </style>
 </head>
+
 <body>
 
 <h2>🌱 わかばチャット</h2>
 
-<div id="chat"></div>
+<!-- 名前入力画面 -->
+<div id="name-screen">
+  <p>こんにちは🌱</p>
+  <p>あなたの名前を教えてね</p>
+  <input id="name-input" type="text">
+  <br><br>
+  <button onclick="startChat()">はじめる</button>
+</div>
 
-<input id="input" type="text" placeholder="メッセージを入力">
-<button onclick="send()">送信</button>
+<!-- チャット画面 -->
+<div id="chat-screen" style="display:none;">
+  <img src="wakaba.jpeg" id="wakaba-img">
+
+  <div id="chat"></div>
+
+  <input id="input" type="text" placeholder="メッセージを入力">
+  <button onclick="send()">送信</button>
+</div>
 
 <script>
-    const userId = "test001"; // 仮のユーザーID
+  let userId = "";
 
-    async function send() {
-        const input = document.getElementById("input");
-        const message = input.value;
-        if (!message) return;
+  function startChat() {
+    const name = document.getElementById("name-input").value;
+    if (!name) return;
 
-        addMessage("me", message);
-        input.value = "";
+    userId = "user_" + Date.now();
 
-        const response = await fetch("http://127.0.0.1:8000/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                user_id: userId,
-                message: message
-            })
-        });
+    document.getElementById("name-screen").style.display = "none";
+    document.getElementById("chat-screen").style.display = "block";
 
-        const data = await response.json();
-        addMessage("wakaba", data.reply);
-    }
+    sendMessage(name);
+  }
 
-    function addMessage(role, text) {
-        const chat = document.getElementById("chat");
-        const div = document.createElement("div");
-        div.className = role;
-        div.innerText = text;
-        chat.appendChild(div);
-        chat.scrollTop = chat.scrollHeight;
-    }
+  async function send() {
+    const input = document.getElementById("input");
+    const message = input.value;
+    if (!message) return;
+
+    sendMessage(message);
+    input.value = "";
+  }
+
+  async function sendMessage(message) {
+    addMessage("me", message);
+
+    const response = await fetch("http://127.0.0.1:8000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: userId,
+        message: message
+      })
+    });
+
+    const data = await response.json();
+    addMessage("wakaba", data.reply);
+  }
+
+  function addMessage(role, text) {
+    const chat = document.getElementById("chat");
+    const div = document.createElement("div");
+    div.className = role;
+    div.innerText = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
 </script>
 
 </body>
